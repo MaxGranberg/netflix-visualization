@@ -1,0 +1,12 @@
+
+#chartContainer {
+  width: 1300px;
+  height: 1000px;
+
+}
+
+#countriesChartContainer {
+  width: 800px;
+  height: 800px;
+  margin: auto;
+}

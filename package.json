@@ -1,0 +1,32 @@
+{
+  "name": "assignment-wt2",
+  "version": "1.0.0",
+  "description": "Replace this with the name of your project. It should be a brief and catchy title that accurately represents your application.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "NODE_ENV=production node src/server.js",
+    "start:dev": "NODE_ENV=development node src/server.js",
+    "dev": "nodemon --inspect -r dotenv/config src/server.js",
+    "lint": "npx eslint ./src || exit 0",
+    "lint:fix": "npx eslint ./src --fix || exit 0"
+  },
+  "author": "Max Granberg <mg224em@student.lnu.se>",
+  "license": "ISC",
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.13.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "csvtojson": "^2.0.10",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "postcss": "^8.4.38"
+  },
+  "devDependencies": {
+    "@lnu/eslint-config": "^1.1.7",
+    "dotenv": "^16.0.3",
+    "nodemon": "^2.0.20",
+    "tailwindcss": "^3.4.3"
+  }
+}
