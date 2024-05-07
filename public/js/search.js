@@ -20,7 +20,11 @@ async function fetchData (title = '', type = '', year = '') {
   }
 
   try {
-    const response = await fetch(`https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/search?${params.toString()}`)
+    const response = await fetch(`https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/search?${params.toString()}`, {
+      headers: {
+        Authorization: `ApiKey "${process.env.API_KEY}`
+      }
+    })
     const data = await response.json()
     return data
   } catch (error) {

@@ -21,7 +21,11 @@ async function renderTopCountriesChart () {
  */
 async function fetchTopCountriesData () {
   try {
-    const response = await fetch('https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/top-countries')
+    const response = await fetch('https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/top-countries', {
+      headers: {
+        Authorization: `ApiKey "${process.env.API_KEY}`
+      }
+    })
     const data = await response.json()
     return data
   } catch (error) {
