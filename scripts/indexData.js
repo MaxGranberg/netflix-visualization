@@ -4,13 +4,9 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const client = new Client({
-  node: 'https://localhost:9200',
+  node: process.env.ELASTIC_NODE,
   auth: {
-    username: 'elastic',
-    password: process.env.ELASTIC_PASSWORD
-  },
-  tls: {
-    rejectUnauthorized: false // This is not recommended in production
+    apiKey: process.env.API_KEY
   }
 })
 

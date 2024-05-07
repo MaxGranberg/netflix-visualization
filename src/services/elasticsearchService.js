@@ -7,16 +7,13 @@ export class ElasticsearchService {
   /**
    * Initializes a new instance of the Elasticsearch client.
    */
-  constructor () {
+  constructor() {
     this.client = new Client({
       node: process.env.ELASTIC_NODE,
       auth: {
-        username: process.env.ELASTIC_USERNAME,
-        password: process.env.ELASTIC_PASSWORD
-      },
-      tls: {
-        rejectUnauthorized: false // Use only in development; in production, you should use valid certificates
+        apiKey: process.env.API_KEY
       }
+
     })
   }
 
