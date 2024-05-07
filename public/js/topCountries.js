@@ -21,7 +21,7 @@ async function renderTopCountriesChart () {
  */
 async function fetchTopCountriesData () {
   try {
-    const response = await fetch('http://localhost:8080/api/v1/media/top-countries')
+    const response = await fetch('https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/top-countries')
     const data = await response.json()
     return data
   } catch (error) {
