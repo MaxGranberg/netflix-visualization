@@ -7,13 +7,12 @@ export class ElasticsearchService {
   /**
    * Initializes a new instance of the Elasticsearch client.
    */
-  constructor() {
+  constructor () {
     this.client = new Client({
       node: process.env.ELASTIC_NODE,
       auth: {
         apiKey: process.env.API_KEY
       }
-
     })
   }
 

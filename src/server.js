@@ -33,7 +33,7 @@ try {
   }))
 
   // Enable CORS for the server
-  app.use(cors({ origin: ['', 'http://localhost:8080'], credentials: true }))
+  app.use(cors({ origin: ['', 'https://netflix-visualization-ddbaf3e0356b.herokuapp.com/'], credentials: true }))
 
   // Set up a morgan logger using the dev format for log entries.
   app.use(logger('dev'))
