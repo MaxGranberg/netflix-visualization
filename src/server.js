@@ -26,7 +26,7 @@ try {
         scriptSrc: ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
         styleSrc: ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
         imgSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'", 'http://localhost:8080/api/v1'] // Add your API endpoint if different
+        connectSrc: ["'self'", 'https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1']
       }
     }
     // Other Helmet options...
