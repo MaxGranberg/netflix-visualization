@@ -4,11 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const client = new Client({
-  node: 'https://zkerqqq3aj:o2zgrvmigy@smoke-574473526.eu-west-1.bonsaisearch.net:443',
-  auth: {
-    username: 'zkerqqq3aj',
-    password: 'o2zgrvmigy'
-  },
+  node: 'https://ecr1djz29:l95eu2pa4k@netflix-visualizatio-4529248334.eu-central-1.bonsaisearch.net:443',
   apiVersion: '7.10'
 })
 
@@ -61,7 +57,7 @@ async function indexData () {
       }
     }
   } else {
-    console.log('All documents indexed successfully.')
+    console.log('All documents indexed successfully.', response.statusCode)
   }
 }
 
