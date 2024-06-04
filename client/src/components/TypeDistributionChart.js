@@ -9,8 +9,19 @@ const TypeDistributionChart = () => {
   const [type, setType] = useState('');
 
   const handleFetchData = async () => {
-    const result = await fetchData(type);
-    setData(result);
+    try {
+      const result = await fetchData(type);
+      console.log(result)
+      if (Array.isArray(result)) {
+        setData(result);
+      } else {
+        console.error('Fetched data is not an array:', result);
+        setData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setData([]);
+    }
   };
 
   useEffect(() => {
@@ -23,6 +34,10 @@ const TypeDistributionChart = () => {
       const chartStatus = Chart.getChart(ctx);
       if (chartStatus !== undefined) {
         chartStatus.destroy();
+      }
+
+      if (data.length === 0) {
+        return;
       }
 
       const groupedData = data.reduce((acc, { release_year }) => {

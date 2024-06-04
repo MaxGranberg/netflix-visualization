@@ -32,13 +32,13 @@ export class ElasticsearchService {
     }
 
     if (type && type.trim() !== '') {
-      searchQuery.bool.filter.push({ term: { 'type.keyword': type } })
+      searchQuery.bool.filter.push({ term: { 'type.keyword': type } });
     }
     if (title && title.trim() !== '') {
       searchQuery.bool.must.push({ match: { title: { query: title, operator: 'and', fuzziness: 'AUTO' } } })
     }
     if (genre && genre.trim() !== '') {
-      searchQuery.bool.filter.push({ term: { 'listed_in.keyword': genre } })
+      searchQuery.bool.filter.push({ term: { 'listed_in.keyword': genre } });
     }
     if (year && year.trim() !== '') {
       searchQuery.bool.filter.push({ range: { release_year: { gte: year, lte: year } } })
@@ -47,27 +47,26 @@ export class ElasticsearchService {
       searchQuery.bool.must.push({ multi_match: { query, fields: ['title^2', 'description', 'cast', 'director'] } })
     }
 
-    const allResults = []
-    let from = 0
-    const size = 100 // Can adjust this size
-    let totalHits = null
-
-    do {
+    try {
       const response = await this.client.search({
         index: 'netflix_titles',
-        from,
-        size,
         body: {
           query: searchQuery
         }
       })
 
-      allResults.push(...response.hits.hits.map(hit => hit._source))
-      from += size
-      totalHits = response.hits.total.value
-    } while (from < totalHits)
+      console.log('Elasticsearch response:', response) // Detailed logging of the response
 
-    return allResults
+      if (response.hits && Array.isArray(response.hits.hits)) {
+        return response.hits.hits.map(hit => hit._source)
+      } else {
+        console.error('Unexpected Elasticsearch response format:', response)
+        throw new Error('Unexpected Elasticsearch response format')
+      }
+    } catch (error) {
+      console.error('Error searching Elasticsearch:', error)
+      throw error
+    }
   }
 
   /**
@@ -92,10 +91,12 @@ export class ElasticsearchService {
         }
       })
 
+      console.log('Elasticsearch top countries response:', response) // Detailed logging of the response
+
       return response.aggregations.countries.buckets.map(bucket => ({
         country: bucket.key,
-        count: bucket.doc_count
-      }))
+        count: bucket.doc_count,
+      }));
     } catch (error) {
       console.error('Error fetching top countries from Elasticsearch:', error)
       throw error
@@ -103,4 +104,4 @@ export class ElasticsearchService {
   }
 }
 
-export const elasticsearchService = new ElasticsearchService()
+export const elasticsearchService = new ElasticsearchService();
