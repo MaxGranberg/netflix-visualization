@@ -4,10 +4,12 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const client = new Client({
-  node: process.env.ELASTIC_NODE,
+  node: 'https://zkerqqq3aj:o2zgrvmigy@smoke-574473526.eu-west-1.bonsaisearch.net:443',
   auth: {
-    apiKey: process.env.API_KEY
-  }
+    username: 'zkerqqq3aj',
+    password: 'o2zgrvmigy'
+  },
+  apiVersion: '7.10'
 })
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -46,7 +48,6 @@ async function indexData () {
   })
 
   const response = await client.bulk({ refresh: true, body })
-  console.log(response.errors)
 
   // First, check the response status.
   if (response.statusCode >= 400) {

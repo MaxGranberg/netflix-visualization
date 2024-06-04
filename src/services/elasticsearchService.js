@@ -9,10 +9,12 @@ export class ElasticsearchService {
    */
   constructor () {
     this.client = new Client({
-      node: process.env.ELASTIC_NODE,
+      node: 'https://zkerqqq3aj:o2zgrvmigy@smoke-574473526.eu-west-1.bonsaisearch.net:443',
       auth: {
-        apiKey: process.env.API_KEY
-      }
+        username: 'zkerqqq3aj',
+        password: 'o2zgrvmigy'
+      },
+      apiVersion: '7.10'
     })
   }
 
