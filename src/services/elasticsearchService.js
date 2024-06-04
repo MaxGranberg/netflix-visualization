@@ -32,13 +32,13 @@ export class ElasticsearchService {
     }
 
     if (type && type.trim() !== '') {
-      searchQuery.bool.filter.push({ term: { 'type.keyword': type } });
+      searchQuery.bool.filter.push({ term: { 'type.keyword': type } })
     }
     if (title && title.trim() !== '') {
       searchQuery.bool.must.push({ match: { title: { query: title, operator: 'and', fuzziness: 'AUTO' } } })
     }
     if (genre && genre.trim() !== '') {
-      searchQuery.bool.filter.push({ term: { 'listed_in.keyword': genre } });
+      searchQuery.bool.filter.push({ term: { 'listed_in.keyword': genre } })
     }
     if (year && year.trim() !== '') {
       searchQuery.bool.filter.push({ range: { release_year: { gte: year, lte: year } } })
@@ -48,19 +48,19 @@ export class ElasticsearchService {
     }
 
     try {
-      const response = await this.client.search({
+      const { body } = await this.client.search({
         index: 'netflix_titles',
         body: {
           query: searchQuery
         }
       })
 
-      console.log('Elasticsearch response:', response) // Detailed logging of the response
+      console.log('Elasticsearch response:', body) // Detailed logging of the response
 
-      if (response.hits && Array.isArray(response.hits.hits)) {
-        return response.hits.hits.map(hit => hit._source)
+      if (body.hits && Array.isArray(body.hits.hits)) {
+        return body.hits.hits.map(hit => hit._source)
       } else {
-        console.error('Unexpected Elasticsearch response format:', response)
+        console.error('Unexpected Elasticsearch response format:', body)
         throw new Error('Unexpected Elasticsearch response format')
       }
     } catch (error) {
@@ -76,7 +76,7 @@ export class ElasticsearchService {
    */
   async fetchTopCountries () {
     try {
-      const response = await this.client.search({
+      const { body } = await this.client.search({
         index: 'netflix_titles',
         body: {
           size: 0,
@@ -91,12 +91,12 @@ export class ElasticsearchService {
         }
       })
 
-      console.log('Elasticsearch top countries response:', response) // Detailed logging of the response
+      console.log('Elasticsearch top countries response:', body)// Detailed logging of the response
 
-      return response.aggregations.countries.buckets.map(bucket => ({
+      return body.aggregations.countries.buckets.map(bucket => ({
         country: bucket.key,
-        count: bucket.doc_count,
-      }));
+        count: bucket.doc_count
+      }))
     } catch (error) {
       console.error('Error fetching top countries from Elasticsearch:', error)
       throw error
@@ -104,4 +104,4 @@ export class ElasticsearchService {
   }
 }
 
-export const elasticsearchService = new ElasticsearchService();
+export const elasticsearchService = new ElasticsearchService()
