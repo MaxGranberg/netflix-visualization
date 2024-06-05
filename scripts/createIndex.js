@@ -27,7 +27,7 @@ async function createIndex () {
           director: { type: 'text' },
           cast: { type: 'text' },
           country: { type: 'keyword' },
-          date_added: { type: 'date', format: 'MMMM d, yyyy' },
+          date_added: { type: 'date', format: 'MMMM d, yyyy||yyyy-MM-dd' },
           release_year: { type: 'date' },
           rating: { type: 'keyword' },
           duration: { type: 'text' },

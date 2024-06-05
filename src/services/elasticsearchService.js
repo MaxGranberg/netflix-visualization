@@ -47,22 +47,34 @@ export class ElasticsearchService {
       searchQuery.bool.must.push({ multi_match: { query, fields: ['title^2', 'description', 'cast', 'director'] } })
     }
 
+    const allResults = []
+    let from = 0
+    const size = 100 // Adjust size as needed
+    let totalHits = null
+
     try {
-      const { body } = await this.client.search({
-        index: 'netflix_titles',
-        body: {
-          query: searchQuery
+      do {
+        const { body } = await this.client.search({
+          index: 'netflix_titles',
+          from,
+          size,
+          body: {
+            query: searchQuery
+          }
+        })
+
+        if (body.hits && Array.isArray(body.hits.hits)) {
+          allResults.push(...body.hits.hits.map(hit => hit._source))
+          totalHits = body.hits.total.value
+          from += size
+          console.log(`Fetched ${allResults.length} of ${totalHits} total results`)
+        } else {
+          console.error('Unexpected Elasticsearch response format:', body)
+          throw new Error('Unexpected Elasticsearch response format')
         }
-      })
+      } while (from < totalHits)
 
-      console.log('Elasticsearch response:', body) // Detailed logging of the response
-
-      if (body.hits && Array.isArray(body.hits.hits)) {
-        return body.hits.hits.map(hit => hit._source)
-      } else {
-        console.error('Unexpected Elasticsearch response format:', body)
-        throw new Error('Unexpected Elasticsearch response format')
-      }
+      return allResults
     } catch (error) {
       console.error('Error searching Elasticsearch:', error)
       throw error
