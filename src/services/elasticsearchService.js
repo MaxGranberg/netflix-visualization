@@ -99,20 +99,29 @@ export class ElasticsearchService {
           aggs: {
             countries: {
               terms: {
-                field: 'country.keyword',
-                size: 10
+                field: 'country',
+                size: 10,
+                missing: 'Unknown'
               }
             }
           }
         }
       })
 
-      console.log('Elasticsearch top countries response:', body)
+      console.log('Elasticsearch top countries response:', JSON.stringify(body, null, 2))
 
-      return body.aggregations.countries.buckets.map(bucket => ({
-        country: bucket.key,
-        count: bucket.doc_count
-      }))
+      if (body.aggregations && body.aggregations.countries && body.aggregations.countries.buckets) {
+        const countriesData = body.aggregations.countries.buckets.map(bucket => ({
+          country: bucket.key,
+          count: bucket.doc_count
+        }))
+
+        console.log('Parsed countries data:', countriesData)
+        return countriesData
+      } else {
+        console.error('Aggregation response structure is not as expected:', body)
+        return []
+      }
     } catch (error) {
       console.error('Error fetching top countries from Elasticsearch:', error)
       throw error
