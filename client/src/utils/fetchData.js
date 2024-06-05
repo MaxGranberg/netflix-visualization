@@ -6,15 +6,15 @@ export async function fetchData(type = '') {
   }
 
   try {
-    const response = await fetch(`https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/search?${params.toString()}`, {
-    });
+    const response = await fetch(`https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/search?${params.toString()}`, {});
     const data = await response.json();
-     // Detailed logging to understand the response structure
-     console.log('Fetch data with filters response:', data);
 
-    // Check if data.hits and data.hits.hits are present
-    if (data.hits && Array.isArray(data.hits.hits)) {
-      return data.hits.hits.map(hit => hit._source); // Return the _source of each hit
+    // Detailed logging to understand the response structure
+    console.log('Fetch data with filters response:', data);
+
+    // Directly return the array if it's in the correct format
+    if (Array.isArray(data)) {
+      return data;
     } else {
       console.error('Unexpected data format:', data);
       return [];
