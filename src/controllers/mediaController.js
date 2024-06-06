@@ -21,11 +21,10 @@ export class MediaController {
    */
   async searchMedia (req, res, next) {
     try {
-      const { type, title, listed_in, release_year, limit, offset } = req.query
+      const { type, title, release_year, limit, offset } = req.query
       const media = await elasticsearchService.search({
         type,
         title,
-        genre: listed_in,
         year: release_year,
         limit,
         offset

@@ -21,7 +21,7 @@ export class ElasticsearchService {
    * @returns {Promise<Array>} The search results.
    */
   async search (params) {
-    const { type, title, genre, year, query, limit = 20, offset = 0 } = params
+    const { type, title, year, limit = 20, offset = 0 } = params
 
     const searchQuery = {
       bool: {
@@ -36,14 +36,8 @@ export class ElasticsearchService {
     if (title && title.trim() !== '') {
       searchQuery.bool.must.push({ match: { title: { query: title, operator: 'and', fuzziness: 'AUTO' } } })
     }
-    if (genre && genre.trim() !== '') {
-      searchQuery.bool.filter.push({ term: { 'listed_in.keyword': genre } })
-    }
     if (year && year.trim() !== '') {
-      searchQuery.bool.filter.push({ range: { release_year: { gte: year, lte: year } } })
-    }
-    if (query && query.trim() !== '') {
-      searchQuery.bool.must.push({ multi_match: { query, fields: ['title^2', 'description', 'cast', 'director'] } })
+      searchQuery.bool.filter.push({ term: { release_year: parseInt(year, 10) } })
     }
 
     try {

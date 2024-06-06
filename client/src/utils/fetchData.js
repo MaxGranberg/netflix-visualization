@@ -25,9 +25,9 @@ export async function fetchData(type = '') {
   }
 }
 
-export async function fetchDataWithFilters(title, type, year, limit = 20, offset = 0) {
+export async function fetchDataWithFilters(title, type, release_year, limit = 20, offset = 0) {
   try {
-    const query = new URLSearchParams({ title, type, year, limit, offset });
+    const query = new URLSearchParams({ title, type, release_year, limit, offset });
     const response = await fetch(`https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/search?${query.toString()}`);
     const data = await response.json();
     return data;
