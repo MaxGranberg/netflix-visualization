@@ -38,7 +38,8 @@ try {
   // Set up a morgan logger using the dev format for log entries.
   app.use(logger('dev'))
 
-  app.use(express.static(path.join(__dirname, '..', 'public')))
+  // Serve static files from the React app
+  app.use(express.static(path.join(__dirname, '..', 'client/build')))
 
   // Parse requests of the content type application/json.
   app.use(express.json())
@@ -47,6 +48,12 @@ try {
 
   // Register routes.
   app.use('/', router)
+
+  // The "catchall" handler: for any request that doesn't
+  // match one above, send back React's index.html file.
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  })
 
   // Error handler.
   app.use(function (err, req, res, next) {
