@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
-import { fetchData } from '../utils/fetchData';
+import { fetchYearlyProductionData } from '../utils/fetchData';
 
 const TypeDistributionChart = () => {
   const chartRef = useRef(null);
   const [data, setData] = useState([]);
   const [chartType, setChartType] = useState('bar');
   const [type, setType] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleFetchData = async () => {
+    setLoading(true);
     try {
-      const result = await fetchData(type);
-      console.log(result)
+      const result = await fetchYearlyProductionData(type);
       if (Array.isArray(result)) {
         setData(result);
       } else {
@@ -21,6 +22,8 @@ const TypeDistributionChart = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
       setData([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -29,7 +32,7 @@ const TypeDistributionChart = () => {
   }, [type, chartType]);
 
   useEffect(() => {
-    if (chartRef.current) {
+    if (chartRef.current && !loading) {
       const ctx = chartRef.current.getContext('2d');
       const chartStatus = Chart.getChart(ctx);
       if (chartStatus !== undefined) {
@@ -40,20 +43,15 @@ const TypeDistributionChart = () => {
         return;
       }
 
-      const groupedData = data.reduce((acc, { release_year }) => {
-        acc[release_year] = (acc[release_year] || 0) + 1;
-        return acc;
-      }, {});
-
-      const years = Object.keys(groupedData);
-      const counts = Object.values(groupedData);
+      const years = data.map(entry => entry.year);
+      const counts = data.map(entry => entry.count);
 
       new Chart(ctx, {
         type: chartType,
         data: {
           labels: years,
           datasets: [{
-            label: 'Number of Titles Released Each Year',
+            label: 'Number of Titles Released this Year',
             data: counts,
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             borderColor: 'rgba(255, 99, 132, 1)',
@@ -63,24 +61,28 @@ const TypeDistributionChart = () => {
         }
       });
     }
-  }, [data, chartType]);
+  }, [data, chartType, loading]);
 
   return (
     <div className="container mx-auto mt-10 mb-10 p-5 rounded shadow bg-white">
-      <h1 className="text-xl text-center font-bold mb-4">Netflix Shows Data Visualization</h1>
-      <div id="controls" className="flex flex-wrap justify-center gap-4 mb-4">
-        <select value={type} onChange={(e) => setType(e.target.value)} className="form-select px-4 py-2 border rounded">
+      <h1 className="text-2xl text-center font-bold mb-6">Netflix Shows Data Visualization</h1>
+      <div id="controls" className="flex flex-wrap justify-center gap-4 mb-6">
+        <select value={type} onChange={(e) => setType(e.target.value)} className="form-select px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           <option value="">Movies & TV Shows</option>
           <option value="Movie">Movies</option>
           <option value="TV Show">TV Shows</option>
         </select>
-        <select value={chartType} onChange={(e) => setChartType(e.target.value)} className="form-select px-4 py-2 border rounded">
+        <select value={chartType} onChange={(e) => setChartType(e.target.value)} className="form-select px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           <option value="bar">Bar</option>
           <option value="line">Line</option>
         </select>
       </div>
-      <div id="chartContainer">
-        <canvas ref={chartRef} id="typeDistributionChart"></canvas>
+      <div className="flex justify-center items-center h-[600px] w-full">
+        {loading ? (
+          <div className="text-center text-xl">Loading...</div>
+        ) : (
+          <canvas ref={chartRef} className="max-w-full h-full"></canvas>
+        )}
       </div>
     </div>
   );

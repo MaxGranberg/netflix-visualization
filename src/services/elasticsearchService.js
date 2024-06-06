@@ -127,6 +127,59 @@ export class ElasticsearchService {
       throw error
     }
   }
+
+  /**
+   * Fetches the yearly production data from Elasticsearch.
+   *
+   * @param {string} type - The type of media (optional).
+   * @returns {Promise<Array>} The yearly production data.
+   */
+  async fetchYearlyProduction (type = '') {
+    try {
+      const searchQuery = {
+        bool: {
+          must: [],
+          filter: []
+        }
+      }
+
+      if (type && type.trim() !== '') {
+        searchQuery.bool.must.push({ match: { type } })
+      }
+
+      const { body } = await this.client.search({
+        index: 'netflix_titles',
+        size: 0,
+        body: {
+          query: searchQuery,
+          aggs: {
+            yearly_production: {
+              terms: {
+                field: 'release_year',
+                size: 100,
+                order: { _key: 'asc' }
+              }
+            }
+          }
+        }
+      })
+
+      if (body.aggregations && body.aggregations.yearly_production && body.aggregations.yearly_production.buckets) {
+        const yearlyData = body.aggregations.yearly_production.buckets.map(bucket => ({
+          year: bucket.key,
+          count: bucket.doc_count
+        }))
+
+        return yearlyData
+      } else {
+        console.error('Aggregation response structure is not as expected:', body)
+        return []
+      }
+    } catch (error) {
+      console.error('Error fetching yearly production from Elasticsearch:', error)
+      throw error
+    }
+  }
 }
 
 export const elasticsearchService = new ElasticsearchService()

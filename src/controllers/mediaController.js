@@ -68,4 +68,21 @@ export class MediaController {
       next(error)
     }
   }
+
+  /**
+   * Sends a JSON response containing the yearly production data.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {Function} next - Express next middleware function.
+   */
+  async getYearlyProduction (req, res, next) {
+    try {
+      const { type } = req.query
+      const yearlyProduction = await elasticsearchService.fetchYearlyProduction(type)
+      res.json(yearlyProduction)
+    } catch (error) {
+      next(error)
+    }
+  }
 }

@@ -77,7 +77,7 @@ const TopCountriesChart = () => {
     <div className="container mx-auto mt-10 mb-10 p-5 rounded shadow bg-white">
       <h1 className="text-xl text-center font-bold mb-4">Top Producing Countries on Netflix</h1>
       <div id="countriesChartContainer">
-        <canvas ref={chartRef} id="topCountriesChart"></canvas>
+        <canvas ref={chartRef}></canvas>
       </div>
     </div>
   );

@@ -60,3 +60,16 @@ export async function fetchTopCountriesData() {
     throw error;
   }
 }
+
+export async function fetchYearlyProductionData(type) {
+  try {
+    const response = await fetch(`https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/yearly-production?type=${type}`, {
+      method: 'GET'
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching yearly production data:', error);
+    throw error;
+  }
+}

@@ -15,7 +15,7 @@ const App = () => {
             <Link to="/top-countries" className="hover:bg-blue-700 transition duration-300 ease-in-out rounded py-2 px-4">Top Countries</Link>
           </div>
         </header>
-        <main className="container mx-auto mt-10 mb-10 p-5 rounded shadow bg-white">
+        <main className="container mx-auto mb-10 bg-white">
           <Routes>
             <Route path="/" element={<TypeDistributionChart />} />
             <Route path="/search" element={<Search />} />
