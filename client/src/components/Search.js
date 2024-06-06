@@ -11,12 +11,21 @@ const Search = () => {
   const [totalResults, setTotalResults] = useState(0);
   const resultsPerPage = 20;
 
-  const handleSearch = async () => {
+  const fetchSearchResults = async () => {
     const result = await fetchDataWithFilters(title, type, year, resultsPerPage, (page - 1) * resultsPerPage);
     setData(result.results);
     setTotalResults(result.total);
     setSearched(true);
   };
+
+  const handleSearch = () => {
+    setPage(1); // Reset to the first page
+    fetchSearchResults(); // Fetch results when the search button is clicked
+  };
+
+  useEffect(() => {
+    fetchSearchResults();
+  }, [page]);
 
   const handleNextPage = () => {
     setPage(page + 1);
@@ -25,10 +34,6 @@ const Search = () => {
   const handlePrevPage = () => {
     setPage(page - 1);
   };
-
-  useEffect(() => {
-    handleSearch();
-  }, [page]);
 
   return (
     <div className="container mx-auto mt-10 mb-10 p-5 rounded shadow bg-white">
