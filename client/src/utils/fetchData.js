@@ -25,27 +25,15 @@ export async function fetchData(type = '') {
   }
 }
 
-export async function fetchDataWithFilters(title = '', type = '', year = '') {
-  const params = new URLSearchParams();
-
-  if (title.trim() !== '') {
-    params.append('title', title);
-  }
-  if (type.trim() !== '') {
-    params.append('type', type);
-  }
-  if (year.trim() !== '') {
-    params.append('year', year);
-  }
-
+export async function fetchDataWithFilters(title, type, year, limit = 20, offset = 0) {
   try {
-    const response = await fetch(`https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/search?${params.toString()}`, {
-    });
+    const query = new URLSearchParams({ title, type, year, limit, offset });
+    const response = await fetch(`https://netflix-visualization-ddbaf3e0356b.herokuapp.com/api/v1/media/search?${query.toString()}`);
     const data = await response.json();
     return data;
   } catch (error) {
     console.error('Error fetching data:', error);
-    return [];
+    return { results: [], total: 0 };
   }
 }
 

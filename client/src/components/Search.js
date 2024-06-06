@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fetchDataWithFilters } from '../utils/fetchData';
 
 const Search = () => {
@@ -6,11 +6,29 @@ const Search = () => {
   const [type, setType] = useState('');
   const [year, setYear] = useState('');
   const [data, setData] = useState([]);
+  const [searched, setSearched] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
+  const resultsPerPage = 20;
 
   const handleSearch = async () => {
-    const result = await fetchDataWithFilters(title, type, year);
-    setData(result);
+    const result = await fetchDataWithFilters(title, type, year, resultsPerPage, (page - 1) * resultsPerPage);
+    setData(result.results);
+    setTotalResults(result.total);
+    setSearched(true);
   };
+
+  const handleNextPage = () => {
+    setPage(page + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPage(page - 1);
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [page]);
 
   return (
     <div className="container mx-auto mt-10 mb-10 p-5 rounded shadow bg-white">
@@ -40,16 +58,35 @@ const Search = () => {
         </button>
       </div>
       <div id="searchResults" className="mt-4">
-        {data.length === 0 ? (
+        {searched && data.length === 0 ? (
           <p className="text-red-500 text-lg text-center">No results found.</p>
         ) : (
-          <ul className="list-disc pl-5 space-y-2">
-            {data.map((item) => (
-              <li key={item.show_id} className="bg-white p-2 rounded shadow hover:bg-gray-100">
-                {item.title} ({item.release_year}) - {item.type}
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="list-disc pl-5 space-y-2">
+              {data.map((item) => (
+                <li key={item.show_id} className="bg-white p-2 rounded shadow hover:bg-gray-100">
+                  {item.title} ({item.release_year}) - {item.type}
+                </li>
+              ))}
+            </ul>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handlePrevPage}
+                disabled={page === 1}
+                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <span className="mx-4">Page {page} of {Math.ceil(totalResults / resultsPerPage)}</span>
+              <button
+                onClick={handleNextPage}
+                disabled={page * resultsPerPage >= totalResults}
+                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>

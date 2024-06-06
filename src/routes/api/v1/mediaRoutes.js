@@ -11,7 +11,6 @@ export const router = express.Router()
 
 const controller = new MediaController()
 
-router.get('/', controller.getAllMedia)
 router.get('/search', controller.searchMedia)
 router.get('/top-countries', controller.getTopCountries)
 router.get('/yearly-production', controller.getYearlyProduction)

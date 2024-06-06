@@ -21,9 +21,8 @@ export class ElasticsearchService {
    * @returns {Promise<Array>} The search results.
    */
   async search (params) {
-    const { type, title, genre, year, query } = params
+    const { type, title, genre, year, query, limit = 20, offset = 0 } = params
 
-    console.log('Received params:', params)
     const searchQuery = {
       bool: {
         must: [],
@@ -47,38 +46,26 @@ export class ElasticsearchService {
       searchQuery.bool.must.push({ multi_match: { query, fields: ['title^2', 'description', 'cast', 'director'] } })
     }
 
-    console.log('Constructed search query:', JSON.stringify(searchQuery, null, 2))
-
-    const allResults = []
-    let from = 0
-    const size = 100
-    let totalHits = null
-
     try {
-      do {
-        const { body } = await this.client.search({
-          index: 'netflix_titles',
-          from,
-          size,
-          body: {
-            query: searchQuery
-          }
-        })
-
-        console.log('Elasticsearch response:', body)
-
-        if (body.hits && Array.isArray(body.hits.hits)) {
-          allResults.push(...body.hits.hits.map(hit => hit._source))
-          totalHits = body.hits.total.value
-          from += size
-          console.log(`Fetched ${allResults.length} of ${totalHits} total results`)
-        } else {
-          console.error('Unexpected Elasticsearch response format:', body)
-          throw new Error('Unexpected Elasticsearch response format')
+      const { body } = await this.client.search({
+        index: 'netflix_titles',
+        from: offset,
+        size: limit,
+        body: {
+          query: searchQuery
         }
-      } while (from < totalHits)
+      })
 
-      return allResults
+      if (body.hits && Array.isArray(body.hits.hits)) {
+        const results = body.hits.hits.map(hit => hit._source)
+        return {
+          results,
+          total: body.hits.total.value
+        }
+      } else {
+        console.error('Unexpected Elasticsearch response format:', body)
+        throw new Error('Unexpected Elasticsearch response format')
+      }
     } catch (error) {
       console.error('Error searching Elasticsearch:', error)
       throw error
@@ -108,15 +95,12 @@ export class ElasticsearchService {
         }
       })
 
-      console.log('Elasticsearch top countries response:', JSON.stringify(body, null, 2))
-
       if (body.aggregations && body.aggregations.countries && body.aggregations.countries.buckets) {
         const countriesData = body.aggregations.countries.buckets.map(bucket => ({
           country: bucket.key,
           count: bucket.doc_count
         }))
 
-        console.log('Parsed countries data:', countriesData)
         return countriesData
       } else {
         console.error('Aggregation response structure is not as expected:', body)

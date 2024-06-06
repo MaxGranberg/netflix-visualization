@@ -19,7 +19,7 @@ export class MediaController {
    * @param {object} res - Express response object.
    * @param {Function} next - Express next middleware function.
    */
-  async getAllMedia (req, res, next) {
+  async searchMedia (req, res, next) {
     try {
       const { type, title, listed_in, release_year, limit, offset } = req.query
       const media = await elasticsearchService.search({
@@ -31,23 +31,6 @@ export class MediaController {
         offset
       })
       res.json(media)
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  /**
-   * Sends a JSON response containing the search results for movies and tv-shows based on the user's query.
-   *
-   * @param {object} req - Express request object.
-   * @param {object} res - Express response object.
-   * @param {Function} next - Express next middleware function.
-   */
-  async searchMedia (req, res, next) {
-    try {
-      const { title, type, year } = req.query
-      const results = await elasticsearchService.search({ title, type, year })
-      res.json(results)
     } catch (error) {
       next(error)
     }
