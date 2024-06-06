@@ -10,7 +10,12 @@ const TopCountriesChart = () => {
     const fetchData = async () => {
       try {
         const result = await fetchTopCountriesData();
-        setData(result);
+        // Replace empty country names with "No country specified"
+        const modifiedData = result.map(entry => ({
+          ...entry,
+          country: entry.country.trim() === '' ? 'No country specified' : entry.country
+        }));
+        setData(modifiedData);
       } catch (error) {
         console.error('Error fetching data for top countries. Please try again.', error);
       }
