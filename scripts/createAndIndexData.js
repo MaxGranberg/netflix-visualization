@@ -4,14 +4,19 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const client = new Client({
-  node: 'https://ecr1djz29:l95eu2pa4k@netflix-visualizatio-4529248334.eu-central-1.bonsaisearch.net:443',
+  node: process.env.REACT_APP_BONSAI_URL,
   apiVersion: '7.10'
 })
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const datasetPath = path.join(__dirname, '..', 'netflix_titles.csv')
 
-async function deleteIndex(indexName) {
+/**
+ * Deletes an index in Elasticsearch.
+ *
+ * @param {string} indexName - The name of the index to delete.
+ */
+async function deleteIndex (indexName) {
   try {
     await client.indices.delete({ index: indexName })
     console.log(`Index ${indexName} deleted.`)
@@ -24,7 +29,11 @@ async function deleteIndex(indexName) {
   }
 }
 
-async function createIndex() {
+/**
+ * Creates an index in Elasticsearch with predefined settings and mappings for the dataset.
+ * The index will have a specified number of shards and replicas.
+ */
+async function createIndex () {
   const indexName = 'netflix_titles'
   try {
     await client.indices.create({
@@ -58,7 +67,11 @@ async function createIndex() {
   }
 }
 
-async function indexData() {
+/**
+ * Reads the dataset from the provided path and indexes it into the 'netflix_titles' index in Elasticsearch/Bonsai.
+ * This script uses the bulk API for efficient indexing.
+ */
+async function indexData () {
   try {
     const dataset = await csvtojson().fromFile(datasetPath)
     console.log(`Total documents to index: ${dataset.length}`)
@@ -100,7 +113,10 @@ async function indexData() {
   }
 }
 
-async function verifyDataCount() {
+/**
+ * Verifies the total document count in the 'netflix_titles' index.
+ */
+async function verifyDataCount () {
   try {
     await client.indices.refresh({ index: 'netflix_titles' })
     const response = await client.count({ index: 'netflix_titles' })
@@ -110,7 +126,10 @@ async function verifyDataCount() {
   }
 }
 
-async function main() {
+/**
+ * Main function to orchestrate the index deletion, creation, data indexing, and verification.
+ */
+async function main () {
   await deleteIndex('netflix_titles')
   await createIndex()
   await indexData()

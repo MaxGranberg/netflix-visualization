@@ -9,7 +9,7 @@ export class ElasticsearchService {
    */
   constructor () {
     this.client = new Client({
-      node: 'https://ecr1djz29:l95eu2pa4k@netflix-visualizatio-4529248334.eu-central-1.bonsaisearch.net:443',
+      node: process.env.REACT_APP_BONSAI_URL,
       apiVersion: '7.10'
     })
   }
